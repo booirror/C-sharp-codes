@@ -1,6 +1,6 @@
 ﻿namespace Hangman
 {
-    public class RestartCommand
+    public class RestartCommand : ICommand
     {
         public void Execute()
         {

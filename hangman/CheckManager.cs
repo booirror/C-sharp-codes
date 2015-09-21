@@ -58,12 +58,39 @@
         public void CheckLetterAccordance(IWord word, char playerLetter)
         {
             bool isMatch = false;
-            this.addl
+            this.AddLetterInUsed(playerLetter);
+            char[] wordAsChars = word.PrintView.ToCharArray();
+            for (int i = 0; i < word.WordLength; i++)
+            {
+                if (playerLetter == word.Content[i])
+                {
+                    if (!word.RevealedCharacters[i])
+                    {
+                        wordAsChars[i] = word.Content[i];
+                        isMatch = true;
+                        word.RevealedCharacters[i] = true;
+                    }
+                }
+            }
+            word.PrintView = new string(wordAsChars);
+            if (isMatch)
+            {
+                UIMassages.RevealedLetterMessage(word.NumOfRevealedLetters, this.Player.AttemptsToGuess);
+            }
+            else
+            {
+                this.Player.AttemptsToGuess++;
+                UIMassages.NotGuessedLetterMessage(playerLetter, this.Player.AttemptsToGuess);
+            }
         }
 
         public void DefineCommands(IWord secretWord)
         {
-            this.HelpCommand == new Help
+            this.HelpCommand = new HelpCommand(secretWord);
+            this.TopCommand = new TopCommand();
+            this.RestartCommand = new RestartCommand();
+            this.ExitCommand = new ExitCommand();
+            this.UsedCommand = new UsedCommand(this.UsedLetters);
         }
 
         public void AddLetterInUsed(char letter)

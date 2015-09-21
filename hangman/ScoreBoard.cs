@@ -87,5 +87,57 @@
                 throw new FileNotFoundException("unable to find save directory");
             }
         }
+
+        public void Print()
+        {
+            int possition = 1;
+            Console.WriteLine("{0}****Top {1} Scores****", new string(' ', 5), NumberOfTopScores);
+            foreach (var score in this.TopScores)
+            {
+                Console.WriteLine("{0}. {1} --> {2} mistakes", possition, score.Key, score.Value.ToString());
+                possition++;
+            }
+        }
+
+        public void Update(Player player)
+        {
+            this.Load();
+            if (this.TopScores.Count < NumberOfTopScores || player.AttemptsToGuess < this.TopScores.Values.Last())
+            {
+                while (true)
+                {
+                    UIMassages.EnterPlayerNameMessage();
+                    player.Name = this.ConsoleWrapper.ReadLine();
+                    if (player.Name == string.Empty)
+                    {
+                        throw new ArgumentException(" the player's name cann't be an empty string");
+                    }
+                    else if (this.TopScores.ContainsKey(player.Name))
+                    {
+                        throw new ArgumentException("Existing name!");
+                    }
+                    break;
+                }
+                this.AddScore(player);
+                this.Save();
+            }
+        }
+
+        private void ExtractSpecificTopScores()
+        {
+            this.OrderScore();
+            if (this.TopScores.Count > NumberOfTopScores)
+            {
+                for (int i = NumberOfTopScores; i < this.scoreBoard.Count; i++)
+                {
+                    this.TopScores.Remove(this.TopScores.ElementAt(i).Key);
+                }
+            }
+        }
+
+        private void OrderScore()
+        {
+            this.TopScores = this.TopScores.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+        }
     }
 }
